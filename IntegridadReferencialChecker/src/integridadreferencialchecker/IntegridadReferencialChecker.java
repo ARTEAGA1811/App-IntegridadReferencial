@@ -16,8 +16,10 @@ public class IntegridadReferencialChecker {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        GUIPrincipal ventana = new GUIPrincipal();
+        ventana.setVisible(true);
         
-        System.out.println("Hola amigos");
+        
     }
     
 }
