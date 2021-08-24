@@ -8,41 +8,50 @@ package integridadreferencialchecker;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author David Arteaga
  */
 public class ConexionBD {
 
-    public ConexionBD() {
+    private String usuario, contra, nombreBD, nombreServidor, puerto;
+    public Connection con;
 
+    public ConexionBD(String usuario, String contra, String nombreBD, String nombreServidor, String puerto) {
+        this.usuario = usuario;
+        this.contra = contra;
+        this.nombreBD = nombreBD;
+        this.nombreServidor = nombreServidor;
+        this.puerto = puerto;
+        
+        this.con = conectarConLaBD();
+        
     }
 
     //****************************************************
-    public static Connection conectarConLaBD() {
+    public Connection conectarConLaBD() {
 
-        
-        String connectionUrl =
-                "jdbc:sqlserver://DESKTOP-D65SKR6:1433;"
-                        + "database=pubs;"
-                        + "user=sa;"
-                        + "password=123456;"
-                        + "trustServerCertificate=false;"
-                        + "loginTimeout=30;";
-        
+        String connectionUrl = "jdbc:sqlserver://" + nombreServidor +":"+puerto+";"
+                + "database="+nombreBD+";"
+                + "user="+usuario+";"
+                + "password="+contra+";" //123456
+                + "trustServerCertificate=false;"
+                + "loginTimeout=30;";
+
         try {
             Connection con = DriverManager.getConnection(connectionUrl);
+            
             System.out.println("Conexion exitosa a la base de datos.");
             return con;
 
         } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Ha ocurrido un error\nPor favor revise que los datos introducidos sean los correctos.");
             System.out.println("Error.");
             System.out.println(ex.toString());
             return null;
         }
     }
-    
-    
-    
 
 }

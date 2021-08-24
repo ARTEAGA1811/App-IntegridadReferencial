@@ -16,7 +16,7 @@ public class IntegridadReferencialChecker {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        GUIPrincipal ventana = new GUIPrincipal();
+        GUILogin ventana = new GUILogin();
         ventana.setVisible(true);
         
         
