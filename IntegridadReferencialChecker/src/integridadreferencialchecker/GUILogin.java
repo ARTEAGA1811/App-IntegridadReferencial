@@ -67,11 +67,16 @@ public class GUILogin extends javax.swing.JFrame {
 
         jLabel6.setText("Puerto");
 
+        txtUsuario.setText("sa");
         txtUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUsuarioActionPerformed(evt);
             }
         });
+
+        txtContra.setText("123456");
+
+        txtBD.setText("pubs");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -101,11 +106,10 @@ public class GUILogin extends javax.swing.JFrame {
                         .addGap(144, 144, 144)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtPuerto, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(txtServidor, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-                        .addComponent(txtBD)
-                        .addComponent(txtContra, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(txtUsuario, javax.swing.GroupLayout.Alignment.LEADING)))
+                    .addComponent(txtServidor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                    .addComponent(txtBD, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtContra)
+                    .addComponent(txtUsuario))
                 .addGap(39, 39, 39))
         );
         jPanel1Layout.setVerticalGroup(
