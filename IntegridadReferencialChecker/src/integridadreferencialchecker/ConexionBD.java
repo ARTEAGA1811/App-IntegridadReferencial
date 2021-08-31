@@ -77,18 +77,21 @@ public class ConexionBD {
     }
     
     
-    public ArrayList<String> getAnomaliasCONdatos(ArrayList<String> miLista){
+    public ArrayList<String[]> getAnomaliasCONdatos(ArrayList<String> miLista){
         try{
             
-            ArrayList<String> listaAConDatos = new ArrayList<>();
+            ArrayList<String[]> listaAConDatos = new ArrayList<>();
             for(String bucle: miLista){
                 String SQL = "DBCC CHECKCONSTRAINTS("+bucle+");";
                 Statement stmt = this.con.createStatement();
                 try{
                     ResultSet rs = stmt.executeQuery(SQL);
                     while (rs.next()) {
-                    String aux = rs.getString("Table")+"| " + rs.getString("Constraint") +"| "+ rs.getString("Where");
-                    listaAConDatos.add(aux);
+                        String arrAux [] = new String[3];
+                        arrAux[0] = rs.getString("Table");
+                        arrAux[1] = rs.getString("Constraint");
+                        arrAux[2] = rs.getString("Where");
+                        listaAConDatos.add(arrAux);
                     }
                 }catch(Exception e){
                     
@@ -106,7 +109,7 @@ public class ConexionBD {
     
     
     
-    public ArrayList<String> getAnomaliasSINdatos(){
+    public ArrayList<String[]> getAnomaliasSINdatos(){
         try{
             String SQL = "create view getClavesPrimarias\n" +
 "	as\n" +
@@ -140,11 +143,14 @@ public class ConexionBD {
 "where columns = (select columns from getClavesPrimarias GROUP BY columns HAVING COUNT(*)>1)";
             Statement stmt = this.con.createStatement();
             ResultSet rs = stmt.executeQuery(SQLc);
-            ArrayList<String> listaAnomaliasSINdatos = new ArrayList<>();
+            ArrayList<String[]> listaAnomaliasSINdatos = new ArrayList<>();
             
             while (rs.next()) {
-                String aux = rs.getString("pk_name") + "| " + rs.getString("columns") + "| " + rs.getString("table_name");
-                listaAnomaliasSINdatos.add(aux);
+                String arrAux []= new String[3];
+                arrAux[0] = rs.getString("pk_name");
+                arrAux[1] = rs.getString("columns");
+                arrAux[2] = rs.getString("table_name");
+                listaAnomaliasSINdatos.add(arrAux);
             }
             return listaAnomaliasSINdatos;
         }catch(Exception e){
@@ -154,6 +160,93 @@ public class ConexionBD {
          
     }
     
+    
+    
+    
+    public ArrayList<Object[]> getTriggers(){
+        String SQL = ";WITH\n" +
+"        TableTrigger\n" +
+"        AS\n" +
+"        (\n" +
+"            Select \n" +
+"                Sys.Tables.Name As TableName , \n" +
+"                Sys.Tables.Object_Id As Table_Object_Id ,\n" +
+"                Sys.Triggers.Name As Trigger_Name, \n" +
+"                Sys.Triggers.Object_Id As Trigger_Object_Id \n" +
+"            From Sys.Tables \n" +
+"            INNER Join Sys.Triggers On ( Sys.Triggers.Parent_id = Sys.Tables.Object_Id )\n" +
+"            Where ( Sys.Tables.Is_MS_Shipped = 0 )\n" +
+"        ),\n" +
+"  \n" +
+"        AllObject\n" +
+"        AS\n" +
+"        (\n" +
+"            SELECT * FROM TableTrigger\n" +
+"        )\n" +
+"\n" +
+"\n" +
+"    Select \n" +
+"        a.Trigger_Name, a.TableName, tri.is_disabled, e.type_desc\n" +
+"    From AllObject a\n" +
+"	Left join sys.events e\n" +
+"	ON a.Trigger_Object_Id = e.object_id\n" +
+"	left join sys.triggers tri\n" +
+"	ON a.Trigger_Object_Id = tri.object_id\n" +
+"    Order By Trigger_Name;";
+        
+        try{
+            Statement stmt = this.con.createStatement();
+            ResultSet rs = stmt.executeQuery(SQL);
+            ArrayList<Object[]> listaTrigg = new ArrayList<>();
+            ArrayList<String> nombres = new ArrayList<>();
+            while (rs.next()) {
+                if(nombres.contains(rs.getString("Trigger_Name")) == false){
+                    Object arrAux[] = new Object[6];
+                    arrAux[0] = rs.getString("Trigger_Name");
+                    arrAux[1] = rs.getString("TableName");
+                    if(rs.getInt("is_disabled") == 0){
+                        arrAux[2] = true;
+                    }else{
+                        arrAux[2] = false;
+                    }
+                    
+                    arrAux[3] = false;
+                    arrAux[4] = false;
+                    arrAux[5] = false;
+                    
+                    if(rs.getString("type_desc").equals("INSERT")){
+                        arrAux[3] = true;
+                    }else if(rs.getString("type_desc").equals("UPDATE")){
+                        arrAux[4] = true;
+                    }else{
+                        arrAux[5] = true;
+                    }
+                    
+                    listaTrigg.add(arrAux);
+                    nombres.add(rs.getString("Trigger_Name"));
+  
+                }else{
+                    int indEnc = nombres.indexOf(rs.getString("Trigger_Name"));
+                    Object auxarrr[] = listaTrigg.get(indEnc);
+                    if(rs.getString("type_desc").equals("INSERT")){
+                        auxarrr[3] = true;
+                    }else if(rs.getString("type_desc").equals("UPDATE")){
+                        auxarrr[4] = true;
+                    }else{
+                        auxarrr[5] = true;
+                    }
+                }
+  
+            }
+            
+            return listaTrigg;
+                
+        }catch(Exception e){
+            return null;
+        }
+        
+        
+    }
     
     
     
