@@ -5,7 +5,14 @@
  */
 package integridadreferencialchecker;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.table.DefaultTableModel;
 
@@ -14,29 +21,31 @@ import javax.swing.table.DefaultTableModel;
  * @author David Arteaga
  */
 public class GUIMenuPrincipal extends javax.swing.JFrame {
+
     DefaultTableModel modeloUno = new DefaultTableModel();
     DefaultTableModel modeloSinDatos = new DefaultTableModel();
     DefaultTableModel modeloTriggers = new DefaultTableModel();
     /**
      * Creates new form GUIMenuPrincipal
      */
-    
+
     ArrayList<String> miListaIntRef;
     ConexionBD miCon;
+
     public GUIMenuPrincipal(ConexionBD miCon) {
         initComponents();
         this.miCon = miCon;
-        
+
         modeloUno.addColumn("Nombre Tabla");
         modeloUno.addColumn("Nombre Restricción");
         modeloUno.addColumn("Información");
         this.tblAnomaliasCONdatos.setModel(modeloUno);
-        
+
         modeloSinDatos.addColumn("Clave");
         modeloSinDatos.addColumn("Columna");
         modeloSinDatos.addColumn("Nombre Tabla");
         this.tblAnomaliasSINdatos.setModel(modeloSinDatos);
-        
+
         modeloTriggers.addColumn("Nombre Trigger");
         modeloTriggers.addColumn("Tabla");
         modeloTriggers.addColumn("Habilitado");
@@ -45,7 +54,6 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         modeloTriggers.addColumn("DELETE");
     }
 
- 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -67,6 +75,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblTriggers = new javax.swing.JTable();
         btnGenerarTriggers = new javax.swing.JButton();
+        btnGenerarLogs = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -278,13 +287,19 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
+        btnGenerarLogs.setText("Generar Logs");
+        btnGenerarLogs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarLogsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                             .addGap(36, 36, 36)
@@ -294,10 +309,13 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
                             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
                             .addGap(40, 40, 40)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addGroup(layout.createSequentialGroup()
-                            .addGap(709, 709, 709)
-                            .addComponent(btnSalir))))
+                            .addComponent(btnGenerarLogs, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnSalir))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(35, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -312,7 +330,9 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnSalir)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSalir)
+                    .addComponent(btnGenerarLogs))
                 .addContainerGap())
         );
 
@@ -325,61 +345,133 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         this.setVisible(false);
         GUILogin miLogin = new GUILogin();
         miLogin.setVisible(true);
-        
+
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void btnGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarActionPerformed
         // TODO add your handling code here:
         miListaIntRef = miCon.getListaIntegridadReferencial();
         DefaultListModel modelo = new DefaultListModel();
-        for(String bucle: miListaIntRef){
+        for (String bucle : miListaIntRef) {
             modelo.addElement(bucle);
         }
         jListIntRef.setModel(modelo);
-        
-        
+
+
     }//GEN-LAST:event_btnGenerarActionPerformed
 
     private void btnAnomaliasCONdatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnomaliasCONdatosActionPerformed
         // TODO add your handling code here:
-        ArrayList <String[]> listaAConDatos = miCon.getAnomaliasCONdatos(miListaIntRef);
+        ArrayList<String[]> listaAConDatos = miCon.getAnomaliasCONdatos(miListaIntRef);
         //DefaultListModel modelo = new DefaultListModel();
-        for(String[] bucle: listaAConDatos){
+        for (String[] bucle : listaAConDatos) {
             modeloUno.addRow(bucle);
         }
-        
+
         this.tblAnomaliasCONdatos.setModel(modeloUno);
-        
+
         //JLIstAnomaliasConDatos.setModel(modelo);
-        
+
     }//GEN-LAST:event_btnAnomaliasCONdatosActionPerformed
 
     private void btnAnomaliasSinDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnomaliasSinDatosActionPerformed
         // TODO add your handling code here:
-        ArrayList <String[]> listaASinDatos = miCon.getAnomaliasSINdatos();
+        ArrayList<String[]> listaASinDatos = miCon.getAnomaliasSINdatos();
         //DefaultListModel modelo = new DefaultListModel();
-        for(String[] bucle: listaASinDatos){
+        for (String[] bucle : listaASinDatos) {
             modeloSinDatos.addRow(bucle);
         }
-        
+
         this.tblAnomaliasSINdatos.setModel(modeloSinDatos);
         //JlistAnomaliasSINdatos.setModel(modelo);
-        
+
     }//GEN-LAST:event_btnAnomaliasSinDatosActionPerformed
 
     private void btnGenerarTriggersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarTriggersActionPerformed
         // TODO add your handling code here:
         ArrayList<Object[]> listaTriggers = miCon.getTriggers();
-        for(Object[] bucle: listaTriggers){
+        for (Object[] bucle : listaTriggers) {
             modeloTriggers.addRow(bucle);
         }
-        
+
         this.tblTriggers.setModel(modeloTriggers);
     }//GEN-LAST:event_btnGenerarTriggersActionPerformed
 
+    private void btnGenerarLogsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarLogsActionPerformed
+        // TODO add your handling code here:
+
+        String ruta = "C:\\BDD\\LogApp\\IntegridadReferencial.txt";
+        File f = new File(ruta);
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(f);
+        } catch (IOException ex) {
+            Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        BufferedWriter escritura = new BufferedWriter(fw);
+        for (int i = 0; i < miListaIntRef.size(); i++) {
+            try {
+                escritura.write(String.valueOf(miListaIntRef.get(i)));
+            } catch (IOException ex) {
+                Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                escritura.newLine();
+            } catch (IOException ex) {
+                Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+        try {
+            escritura.close();
+        } catch (IOException ex) {
+            Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        ArrayList<String[]> listaAConDatos = miCon.getAnomaliasCONdatos(miListaIntRef);
+
+        String ruta1 = "C:\\BDD\\LogApp\\AnomaliasConDatos.txt";
+        File f1 = new File(ruta1);
+        FileWriter fw1 = null;
+        try {
+            fw1 = new FileWriter(f1);
+        } catch (IOException ex) {
+            Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        BufferedWriter escritura1 = new BufferedWriter(fw1);
+        for (int i = 0; i < listaAConDatos.size(); i++) {
+
+            for (int j = 0; j < listaAConDatos.get(i).length; j++) {
+                try {
+                    System.out.print(Array.get(listaAConDatos.get(i), j) + "\n");
+                    String aux = (String)(""+Array.get(listaAConDatos.get(i), j) + "\n");
+                    System.out.println("String" + aux);
+                    //aux += aux;
+                    escritura1.write(aux);
+
+                } catch (IOException ex) {
+                    Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("HOli");
+                }
+                try {
+                    escritura1.newLine();
+                } catch (IOException ex) {
+                    Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+            try {
+                escritura.close();
+            } catch (IOException ex) {
+                Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }//GEN-LAST:event_btnGenerarLogsActionPerformed
+
     /**
-     * @param args the command line arguments
-     */
+         * @param args the command line arguments
+         */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -416,6 +508,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btnAnomaliasCONdatos;
     private javax.swing.JButton btnAnomaliasSinDatos;
     private javax.swing.JButton btnGenerar;
+    private javax.swing.JButton btnGenerarLogs;
     private javax.swing.JButton btnGenerarTriggers;
     private javax.swing.JButton btnSalir;
     private javax.swing.JList<String> jListIntRef;
