@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -25,6 +26,8 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
     DefaultTableModel modeloUno = new DefaultTableModel();
     DefaultTableModel modeloSinDatos = new DefaultTableModel();
     DefaultTableModel modeloTriggers = new DefaultTableModel();
+    
+    ArrayList<String[]> listaAConDatos;
     /**
      * Creates new form GUIMenuPrincipal
      */
@@ -52,6 +55,9 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         modeloTriggers.addColumn("INSERT");
         modeloTriggers.addColumn("UPDATE");
         modeloTriggers.addColumn("DELETE");
+        this.tblTriggers.setModel(modeloTriggers);
+        
+        miListaIntRef = miCon.getListaIntegridadReferencial();
     }
 
     @SuppressWarnings("unchecked")
@@ -71,11 +77,11 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         tblAnomaliasSINdatos = new javax.swing.JTable();
         btnAnomaliasSinDatos = new javax.swing.JButton();
+        btnGenerarLogs = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblTriggers = new javax.swing.JTable();
         btnGenerarTriggers = new javax.swing.JButton();
-        btnGenerarLogs = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -210,14 +216,26 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
             }
         });
 
+        btnGenerarLogs.setText("Generar Logs");
+        btnGenerarLogs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarLogsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(603, Short.MAX_VALUE)
-                .addComponent(btnAnomaliasSinDatos, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap(463, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnGenerarLogs, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(135, 135, 135))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnAnomaliasSinDatos, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(21, 21, 21))))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
@@ -229,7 +247,9 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnAnomaliasSinDatos)
-                .addContainerGap(109, Short.MAX_VALUE))
+                .addGap(41, 41, 41)
+                .addComponent(btnGenerarLogs)
+                .addContainerGap(45, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
@@ -287,13 +307,6 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
-        btnGenerarLogs.setText("Generar Logs");
-        btnGenerarLogs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGenerarLogsActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -310,13 +323,10 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                             .addGap(40, 40, 40)
                             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(btnGenerarLogs, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnSalir))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnSalir, javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -330,9 +340,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSalir)
-                    .addComponent(btnGenerarLogs))
+                .addComponent(btnSalir)
                 .addContainerGap())
         );
 
@@ -362,7 +370,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
 
     private void btnAnomaliasCONdatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnomaliasCONdatosActionPerformed
         // TODO add your handling code here:
-        ArrayList<String[]> listaAConDatos = miCon.getAnomaliasCONdatos(miListaIntRef);
+        listaAConDatos = miCon.getAnomaliasCONdatos(miListaIntRef);
         //DefaultListModel modelo = new DefaultListModel();
         for (String[] bucle : listaAConDatos) {
             modeloUno.addRow(bucle);
@@ -400,7 +408,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
     private void btnGenerarLogsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarLogsActionPerformed
         // TODO add your handling code here:
 
-        String ruta = "C:\\BDD\\LogApp\\IntegridadReferencial.txt";
+        String ruta = "C:\\Auditorias\\REgistrosAplicacion\\IntegridadReferencial.txt";
         File f = new File(ruta);
         FileWriter fw = null;
         try {
@@ -428,50 +436,88 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
             Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        ArrayList<String[]> listaAConDatos = miCon.getAnomaliasCONdatos(miListaIntRef);
+        //****************************************************************************
+        ArrayList<String[]> miLista = miCon.getAnomaliasCONdatos(miListaIntRef);
 
-        String ruta1 = "C:\\BDD\\LogApp\\AnomaliasConDatos.txt";
-        File f1 = new File(ruta1);
-        FileWriter fw1 = null;
         try {
-            fw1 = new FileWriter(f1);
-        } catch (IOException ex) {
-            Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        BufferedWriter escritura1 = new BufferedWriter(fw1);
-        for (int i = 0; i < listaAConDatos.size(); i++) {
+            String miRutaUno = "C:\\Auditorias\\REgistrosAplicacion\\anomaliasConDatos.txt";
 
-            for (int j = 0; j < listaAConDatos.get(i).length; j++) {
-                try {
-                    System.out.print(Array.get(listaAConDatos.get(i), j) + "\n");
-                    String aux = (String)(""+Array.get(listaAConDatos.get(i), j) + "\n");
-                    System.out.println("String" + aux);
-                    //aux += aux;
-                    escritura1.write(aux);
-
-                } catch (IOException ex) {
-                    Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                    System.out.println("HOli");
-                }
-                try {
-                    escritura1.newLine();
-                } catch (IOException ex) {
-                    Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            }
-            try {
-                escritura.close();
-            } catch (IOException ex) {
-                Logger.getLogger(GUIMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            String aux = "";
+            for (String[] bucle : miLista) {
+                aux += Arrays.toString(bucle) + "\n";
             }
 
+            System.out.println(aux);
+            File fileUno = new File(miRutaUno);
+            // Si el archivo no existe es creado
+            if (!fileUno.exists()) {
+                fileUno.createNewFile();
+            }
+            FileWriter fwUno = new FileWriter(fileUno);
+            BufferedWriter bwUno = new BufferedWriter(fwUno);
+            bwUno.write(aux);
+            bwUno.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("hubo un error qui");
         }
+
+        //**************************************************************************************
+        ArrayList<String[]> miListaDos= miCon.getAnomaliasSINdatos();
+        try {
+            String miRutaDos = "C:\\Auditorias\\REgistrosAplicacion\\anomaliasSinDatos.txt";
+
+            String aux = "";
+            for (String[] bucle : miListaDos) {
+                aux += Arrays.toString(bucle) + "\n";
+            }
+
+            System.out.println(aux);
+            File fileDos = new File(miRutaDos);
+            // Si el archivo no existe es creado
+            if (!fileDos.exists()) {
+                fileDos.createNewFile();
+            }
+            FileWriter fwDos = new FileWriter(fileDos);
+            BufferedWriter bwDos = new BufferedWriter(fwDos);
+            bwDos.write(aux);
+            bwDos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("hubo un error qui");
+        }
+
+        
+        //************************************************************************
+        ArrayList<Object[]> miListaTres= miCon.getTriggers();
+        try {
+            String miRutaTres = "C:\\Auditorias\\REgistrosAplicacion\\auditoriaIUD.txt";
+
+            String aux = "";
+            for (Object[] bucle : miListaTres) {
+                aux += Arrays.toString(bucle) + "\n";
+            }
+
+            System.out.println(aux);
+            File fileTres = new File(miRutaTres);
+            // Si el archivo no existe es creado
+            if (!fileTres.exists()) {
+                fileTres.createNewFile();
+            }
+            FileWriter fwTres = new FileWriter(fileTres);
+            BufferedWriter bwTres = new BufferedWriter(fwTres);
+            bwTres.write(aux);
+            bwTres.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("hubo un error qui");
+        }
+
     }//GEN-LAST:event_btnGenerarLogsActionPerformed
 
     /**
-         * @param args the command line arguments
-         */
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
