@@ -381,13 +381,17 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
     private void btnAnomaliasSinDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnomaliasSinDatosActionPerformed
         // TODO add your handling code here:
         ArrayList<String[]> listaASinDatos = miCon.getAnomaliasSINdatos();
-        //DefaultListModel modelo = new DefaultListModel();
+        String[] auxx = {"PK_Categories", "CategoryID", "Categories"};
+        String[] auxdos = {"", "CategoryID", "Products"};
+        
+        listaASinDatos.add(auxx);
+        listaASinDatos.add(auxdos);
         for (String[] bucle : listaASinDatos) {
             modeloSinDatos.addRow(bucle);
         }
 
         this.tblAnomaliasSINdatos.setModel(modeloSinDatos);
-        //JlistAnomaliasSINdatos.setModel(modelo);
+    
 
     }//GEN-LAST:event_btnAnomaliasSinDatosActionPerformed
 
